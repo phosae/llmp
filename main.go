@@ -28,7 +28,7 @@ type LitellmParams struct {
 
 type Config struct {
 	ModelList []ModelConfig `yaml:"model_list"`
-	AuthToken string         `yaml:"auth_token,omitempty"`
+	AuthToken string        `yaml:"auth_token,omitempty"`
 }
 
 var modelConfigs map[string]ModelConfig
@@ -72,6 +72,9 @@ func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			authHeader = r.Header.Get("x-api-key")
+		}
 		if authHeader == "" {
 			http.Error(w, "Authorization header required", http.StatusUnauthorized)
 			return
@@ -129,7 +132,7 @@ func proxyToUpstream(w http.ResponseWriter, r *http.Request) {
 	}
 
 	upstreamURL := strings.TrimSuffix(config.LitellmParams.APIBase, "/") + r.URL.Path
-	
+
 	log.Printf("Upstream URL: %s", upstreamURL)
 	log.Printf("Request body: %s", string(modifiedBody))
 
@@ -162,7 +165,7 @@ func proxyToUpstream(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error forwarding request", http.StatusBadGateway)
 		return
 	}
-	
+
 	log.Printf("Upstream response status: %d, headers: %v", resp.StatusCode, resp.Header)
 
 	for key, values := range resp.Header {
@@ -200,7 +203,7 @@ func proxyToUpstream(w http.ResponseWriter, r *http.Request) {
 		for scanner.Scan() {
 			line := scanner.Text()
 			log.Printf("Streaming line: %s", line) // Debug log
-			
+
 			// Write the complete line with proper SSE format
 			if _, writeErr := w.Write([]byte(line + "\n")); writeErr != nil {
 				log.Printf("Error writing streaming line: %v", writeErr)
@@ -213,7 +216,7 @@ func proxyToUpstream(w http.ResponseWriter, r *http.Request) {
 		if err := scanner.Err(); err != nil {
 			log.Printf("Scanner error in streaming response: %v", err)
 		}
-		
+
 		log.Printf("Streaming completed")
 	} else {
 		if _, err := io.Copy(w, resp.Body); err != nil {
