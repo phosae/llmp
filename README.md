@@ -7,7 +7,7 @@ Supports LiteLLM-compatible config.
 ## Run
 
 ```bash
-docker run -e LITELLM_MASTER_KEY="sk-1234" -v /etc/litellm/config.yaml:/app/config.yaml -p 4000:8400 local/llmp
+docker run -e LITELLM_MASTER_KEY="sk-1234" -dp 4000:8400 -v /etc/litellm/config.yaml:/app/config.yaml local/llmp /app/config.yaml
 ```
 
 ## Build
