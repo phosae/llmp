@@ -1,0 +1,10 @@
+model_list:
+- model_name: gpt-4o
+  litellm_params:
+    model: openai/gpt-4o
+    api_base: https://api.openai.com/v1
+    api_key:  '<api_key>'
+
+# Optional: static token authentication using LITELLM_MASTER_KEY
+# Set LITELLM_MASTER_KEY environment variable or uncomment below
+# auth_token: 'your-master-key-here'

@@ -1,0 +1,3 @@
+# Static files for ko
+Files here are included in the Docker image at /var/run/ko/
+Place config files, templates, or other static assets here.

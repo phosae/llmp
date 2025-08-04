@@ -1,0 +1,2 @@
+# ko configuration file
+defaultBaseImage: cgr.dev/chainguard/static:latest
