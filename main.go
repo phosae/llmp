@@ -72,20 +72,16 @@ func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		authHeader := r.Header.Get("Authorization")
+		token := strings.TrimPrefix(authHeader, "Bearer ")
 		if authHeader == "" {
 			authHeader = r.Header.Get("x-api-key")
+			token = authHeader
 		}
 		if authHeader == "" {
-			http.Error(w, "Authorization header required", http.StatusUnauthorized)
+			http.Error(w, "Authorization or x-api-key header required", http.StatusUnauthorized)
 			return
 		}
 
-		if !strings.HasPrefix(authHeader, "Bearer ") {
-			http.Error(w, "Invalid authorization format. Use 'Bearer <token>'", http.StatusUnauthorized)
-			return
-		}
-
-		token := strings.TrimPrefix(authHeader, "Bearer ")
 		if token != authToken {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
